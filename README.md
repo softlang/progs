@@ -33,3 +33,8 @@ For the abstract syntax of constraints and target queries, please inspect ```pro
 For more information about the ProGS shape validation language, see the following paper:
 
 TODO
+
+# References
+
+This ASP encoding is inspired by [SHaclEX](https://github.com/weso/shaclex), an implementation of SHACL and ShEx that
+features a protoypical ASP-based validation engine. See also [this](https://labra.weso.es/pdf/2018_SlidesNegationRecursionValidatingRDF.pdf) talk.
