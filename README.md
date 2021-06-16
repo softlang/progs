@@ -22,7 +22,9 @@ After installing ```clingo``` you can run the example program as follows:
 
 ```clingo progs.lp example.lp```
 
-or by using the ```run.sh``` script.
+or by using the ```run.sh``` script. By default, this will output only 1 faithful assignment, or UNSATISFIABLE. In order to obtain at most N solutions, supply the additional argument N. For all solutions, N = 0.
+
+```clingo progs.lp example.lp N```
 
 # Validation
 
