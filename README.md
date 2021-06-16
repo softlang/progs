@@ -11,10 +11,10 @@ On Debian and derivatives, Clingo is available through two separate packages:
 
 ## Other platforms
 
-For other linux distributions, you may find the package ```clingo``` in your package repository.
-For downloads and setup intructions on other platforms, please consult the [official documentation](https://potassco.org/doc/start/).
-Alternatively, an instance of Clingo is hosted [here](https://potassco.org/clingo/run/). To use the online version, simply
-copy the contents of ```progs.lp``` and an example (or your own example instance) into the tool.
+For other GNU/Linux distributions, you may find the package ```clingo``` in your package repository. For macOS, ```clingo``` packages are available via Homebrew and MacPorts.
+For downloads and setup instructions on other platforms, please consult the [official documentation](https://potassco.org/doc/start/).
+Alternatively, an instance of Clingo is hosted [here](https://potassco.org/clingo/run/). In order to use the online version, simply
+copy & paste the contents of ```progs.lp``` and an example (or your own example instance).
 
 # Execution
 
@@ -22,7 +22,7 @@ After installing ```clingo``` you can run the example program as follows:
 
 ```clingo progs.lp example.lp```
 
-or by using the ```run.sh``` script. By default, this will output only 1 faithful assignment, or UNSATISFIABLE. In order to obtain at most N solutions, supply the additional argument N. For all solutions, N = 0.
+or by using the ```run.sh``` script. By default, this will output only 1 faithful assignment (or UNSATISFIABLE). In order to obtain at most N solutions, supply the additional argument N (see below). For all solutions, use N = 0.
 
 ```clingo progs.lp example.lp N```
 
@@ -39,4 +39,4 @@ TODO
 # References
 
 This ASP encoding is inspired by [SHaclEX](https://github.com/weso/shaclex), an implementation of SHACL and ShEx that
-features a protoypical ASP-based validation engine. See also [this](https://labra.weso.es/pdf/2018_SlidesNegationRecursionValidatingRDF.pdf) talk.
+features a prototypical ASP-based validation engine. See also [this](https://labra.weso.es/pdf/2018_SlidesNegationRecursionValidatingRDF.pdf) talk.
