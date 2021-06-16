@@ -28,77 +28,100 @@ min(maybe,no,no).
 constraint(C) :- constraint(and(C,_)).
 constraint(C) :- constraint(and(_,C)).
 constraint(C) :- nodeshape(_,C,_).
+constraint(C) :- edgeshape(_,C,_).
 
-shape(S) :- nodeshape(S,_,_).
+nodeshape(S) :- nodeshape(S,_,_).
+edgeshape(S) :- edgeshape(S,_,_).
 
-targetquery(label(L)) :- labels(L).
-targetquery(node(N)) :- node(N).
-targetquery(hasProperty(K)) :- properties(K).
-targetquery(bottom).
+targetN(N,S) :- nodeshape(S,_,label(L)), label(N,L).
+targetN(N,S) :- nodeshape(S,_,hasProperty(K)), property(N,K,_).
+targetN(N,S) :- nodeshape(S,_,node(N)).
 
-target(N,S) :- nodeshape(S,_,label(L)), label(N,L).
-target(N,S) :- nodeshape(S,_,hasProperty(K)), property(N,K,_).
-target(N,S) :- nodeshape(S,_,node(N)).
+targetE(E,S) :- edgeshape(S,_,label(L)), label(E,L).
+targetE(E,S) :- edgeshape(S,_,hasProperty(K)), property(E,K,_).
+targetE(E,S) :- edgeshape(S,_,edge(E)).
 
-:- target(X,S), not assign(X,S,yes).
+:- targetN(N,S), not assignN(N,S,yes).
+:- targetE(E,S), not assignE(E,S,yes).
 
-assign(X,S,R) :- nodeshape(S,C,_), satisfies(X,C,R).
+assignN(N,S,R) :- nodeshape(S,C,_), satisfiesN(N,C,R).
+assignE(E,S,R) :- edgeshape(S,C,_), satisfiesE(E,C,R).
 
-assign(X,S,yes) | assign(X,S,no) | assign(X,S,maybe) :- node(X), shape(S).
+assignN(N,S,yes) | assignN(N,S,no) | assignN(N,S,maybe) :- node(N), nodeshape(S).
+assignE(E,S,yes) | assignE(E,S,no) | assignE(E,S,maybe) :- edge(E), edgeshape(S).
 
 % -- Top --
 
-satisfies(N,top,yes) :- node(N).
+satisfiesN(N,top,yes) :- node(N).
+satisfiesE(E,top,yes) :- edge(E).
 
 % -- ShapeRef --
 
-satisfies(N,shapeRef(S),R) :- node(N), constraint(shapeRef(S)),
-                              assign(N,S,R).
+satisfiesN(N,shapeRef(S),R) :- node(N), constraint(shapeRef(S)),
+                              assignN(N,S,R).
 
-% -- NodeId --
+satisfiesE(E,shapeRef(S),R) :- edge(E), constraint(shapeRef(S)),
+                              assignN(E,S,R).
 
-satisfies(N, nodeId(N2), yes) :- node(N), node(N2), N == N2.
-satisfies(N, nodeId(N2), no) :- node(N), node(N2), N != N2.
+% -- NodeId/EdgeID --
+
+satisfiesN(N, nodeId(N2), yes) :- node(N), node(N2), N == N2.
+satisfiesN(N, nodeId(N2), no) :- node(N), node(N2), N != N2.
+
+satisfiesE(E, edgeId(E2), yes) :- edge(E), edge(E2), E == E2.
+satisfiesE(E, edgeId(E2), no) :- edge(E), edge(E2), E != E2.
 
 % -- Label --
 
-satisfies(N,label(L),yes) :- node(N), constraint(label(L)), label(N,L).
-satisfies(N,label(L),no) :- node(N), constraint(label(L)), not label(N,L).
+satisfiesN(N,label(L),yes) :- node(N), constraint(label(L)), label(N,L).
+satisfiesN(N,label(L),no) :- node(N), constraint(label(L)), not label(N,L).
+
+satisfiesE(E,label(L),yes) :- edge(E), constraint(label(L)), label(E,L).
+satisfiesE(E,label(L),no) :- edge(E), constraint(label(L)), not label(E,L).
 
 % -- Negate --
 
-satisfies(N, negate(C), yes) :- node(N), constraint(negate(C)),
-                                satisfies(N,C,no).
-satisfies(N, negate(C), no) :- node(N), constraint(negate(C)),
-                               satisfies(N,C,yes).
+satisfiesN(N, negate(C), yes) :- node(N), constraint(negate(C)),
+                                 satisfiesN(N,C,no).
+satisfiesN(N, negate(C), no) :- node(N), constraint(negate(C)),
+                                satisfiesN(N,C,yes).
+
+satisfiesE(E, negate(C), yes) :- edge(E), constraint(negate(C)),
+                                 satisfiesE(E,C,no).
+satisfiesE(E, negate(C), no) :- edge(E), constraint(negate(C)),
+                                satisfiesE(E,C,yes).
 
 % -- And --
 
-satisfies(N,and(S1,S2),R) :- node(N), constraint(and(S1,S2)),
-                             satisfies(N,S1,R1), satisfies(N,S2,R2),
-                             min(R1,R2,R).
+satisfiesN(N,and(C1,C2),R) :- node(N), constraint(and(C1,C2)),
+                              satisfiesN(N,C1,R1), satisfiesN(N,C2,R2),
+                              min(R1,R2,R).
+
+satisfiesE(E,and(C1,C2),R) :- edge(E), constraint(and(C1,C2)),
+                              satisfiesE(E,C1,R1), satisfiesE(E,C2,R2),
+                              min(R1,R2,R).
 
 % -- GreaterEq --
 
-satisfies(N,greaterEq(L,S,I),yes) :- node(N), constraint(greaterEq(L,S,I)),
-                                     countShape(N,L,S,C), C >= I.
+satisfiesN(N,greaterEq(L,S,I),yes) :- node(N), constraint(greaterEq(L,S,I)),
+                                      countShape(N,L,S,C), C >= I.
 
-satisfies(N,greaterEq(L,S,I),no) :- node(N), constraint(greaterEq(L,S,I)),
-                                    countAll(N,L,C1), countNoShape(N,L,S,C2),
-                                    C1 - C2 < I.
+satisfiesN(N,greaterEq(L,S,I),no) :- node(N), constraint(greaterEq(L,S,I)),
+                                     countAll(N,L,C1), countNoShape(N,L,S,C2),
+                                     C1 - C2 < I.
 
-satisfies(N,greaterEq(P,S,I), maybe) :- node(N), constraint(greaterEq(P,S,I)),
-                                        countShape(N,L,S,C), not C >= I,
-                                        countAll(N,L,C1),
-                                        countNoShape(N,L,S,C2), not C1 - C2 < I.
+satisfiesN(N,greaterEq(P,S,I), maybe) :- node(N), constraint(greaterEq(P,S,I)),
+                                         countShape(N,L,S,C), not C >= I,
+                                         countAll(N,L,C1),
+                                         countNoShape(N,L,S,C2), not C1 - C2 < I.
 
 countAll(N,L,C) :- node(N), labels(L), #count { Y: any(N,L,Y) } = C.
 any(N,L,Y) :- edge(N,E,Y), label(E,L).
 
-countShape(N,L,S,C) :- node(N), labels(L), shape(S),
+countShape(N,L,S,C) :- node(N), labels(L), nodeshape(S),
                        #count { Y: withShape(N,L,S,Y) } = C.
-withShape(N,L,S,Y) :- edge(N,E,Y), label(E,L), assign(Y,S,yes).
+withShape(N,L,S,Y) :- edge(N,E,Y), label(E,L), assignN(Y,S,yes).
 
-countNoShape(N,L,S,C) :- node(N), labels(L), shape(S),
+countNoShape(N,L,S,C) :- node(N), labels(L), nodeshape(S),
                          #count { Y: withoutShape(N,L,S,Y) } = C.
-withoutShape(N,L,S,Y) :- edge(N,E,Y), label(E,L), assign(Y,S,no).
+withoutShape(N,L,S,Y) :- edge(N,E,Y), label(E,L), assignN(Y,S,no).
