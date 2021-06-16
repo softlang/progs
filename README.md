@@ -35,10 +35,10 @@ Validation can then be performed as follows:
 
 ```./run-from-cypher.sh <shapes>```
 
-where ```<shapes>``` is a file with ASP encoded shapes. The folder ```cypher-example``` contains shapes for validating the Neo4j example movie database.
-Note, that in this encoding we still only suport singleton set properties (in this case, we take the first element), we rename all property names and labels, such that
-the first character is lower case. We also replace " with ' in strings. We only support integer and string property values. For what it's worth, all other properties are converted to strings
-via the Python ```str``` function.
+where ```<shapes>``` is a file with ASP encoded shapes. The folder ```movie-example``` contains shapes for validating the Neo4j example movie database.
+Note, that we rename all property names and labels, such that the first character is lower case. We also replace " with ' in strings. We only support integer and string property values. All other properties are converted to strings via the Python ```str``` function.
+
+Validation of other property graph database systems is possible by either exporting graphs in the same JSON layout as Neo4j (an then using ```translate.py```) or by writing a custom translation to the ASP encoding used by ProGS.
 
 # Validation
 
