@@ -1,10 +1,3 @@
-% -----------------------------------------------------------------------------
-% Copyright [2021] Philipp Seifer
-% Software Languages Team, Universität Koblenz-Landau
-% Associated paper: ProGS - Property Graph Shapes Language [ISWC 2021]
-% URL: <TODO>
-% Co-authors: Ralf Lämmel, Steffen Staab
-% -----------------------------------------------------------------------------
 
 % ---- Model (General) --------------------------------------------------------
 % -----------------------------------------------------------------------------
@@ -117,13 +110,3 @@ withoutShape(N,L,S,Y) :- edge(N,E,Y), label(E,L), assign(Y,S,no).
 % -----------------------------------------------------------------------------
 
 #show assign/3.
-
-
-
-% ----- References-------------------------------------------------------------
-% -----------------------------------------------------------------------------
-%
-% Implementation inspired by the following resources:
-%
-% [1] https://labra.weso.es/pdf/2018_SlidesNegationRecursionValidatingRDF.pdf
-% [2] https://github.com/weso/shaclex/blob/master/examples/clingo/negation.pl
