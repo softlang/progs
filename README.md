@@ -69,3 +69,4 @@ features a prototypical ASP-based validation engine. See also [this](https://lab
 - Figure out how to write & run tests with Clingo. Add test cases.
 - Implement path evaluation and missing constraints. Update greaterEq to use paths.
 - Change encoding of property names and labels to quoted strings.
+- Add rewriting rules for syntactic sugar.
