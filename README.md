@@ -62,3 +62,10 @@ Validation of other property graph models is possible by either exporting graphs
 
 This ASP encoding is inspired by [SHaclEX](https://github.com/weso/shaclex), an implementation of SHACL and ShEx that
 features a prototypical ASP-based validation engine. See also [this](https://labra.weso.es/pdf/2018_SlidesNegationRecursionValidatingRDF.pdf) talk.
+
+# TODO
+
+- Fix ```translate.py```: Should output all properties.
+- Figure out how to write & run tests with Clingo. Add test cases.
+- Implement path evaluation and missing constraints. Update greaterEq to use paths.
+- Change encoding of property names and labels to quoted strings.
