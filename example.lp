@@ -37,3 +37,12 @@ nodeshape(employeeShape,
           label(employee)).
 
 nodeshape(organizationShape, label(company), label(company)).
+
+
+
+% ----- Output ----------------------------------------------------------------
+% -----------------------------------------------------------------------------
+
+% Only show assign/3, i.e., a faithful assignment (or UNSATISFIABLE, otherwise)
+
+#show assign/3.
