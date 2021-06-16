@@ -15,6 +15,6 @@ password="1234"
 
 # Convert from JSON to ASP encoding.
 
-./scripts/translate.py -i "graph.json" > graph.lp
+./scripts/translate.py -i "exported.json" > exported.lp
 
-clingo src/progs.lp src/display.lp graph.lp "$1"
+clingo src/progs.lp src/display.lp exported.lp "$1"

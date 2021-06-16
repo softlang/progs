@@ -1,6 +1,3 @@
-% ---- Model (Instance) -------------------------------------------------------
-% -----------------------------------------------------------------------------
-
 % Define all edges in the graph, where
 % the middle element is the edge id.
 
@@ -22,12 +19,14 @@ label(202, colleagueOf).
 label(203, worksFor).
 
 % Define properties for nodes and edges.
-% This prototype only supports singleton sets
-% and the data types string/1, integer/1 and year/1.
+% We support the data types string/1 and integer/1.
+% To annotate multiple values, use multiple property/3
+% with different values.
 
 property(100, name, string("Tim Canterbury")).
 property(100, age, integer(30)).
 property(101, name, string("Wernham Hogg")).
-property(101, name, string("Gareth Keenan")).
-property(203, since, year(2020)).
-property(200, since, year(1970)).
+property(102, name, string("Gareth Keenan")).
+property(203, since, integer(2020)).
+property(200, since, integer(1970)).
+property(200, since, integer(2007)).

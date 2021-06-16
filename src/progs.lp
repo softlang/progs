@@ -1,5 +1,4 @@
-% ---- Model (General) --------------------------------------------------------
-% -----------------------------------------------------------------------------
+% -- Data Model --
 
 node(X) :- edge(X,_,_).
 node(X) :- edge(_,_,X).
@@ -8,12 +7,10 @@ edge(X) :- edge(_,X,_).
 labels(L) :- label(_, L).
 properties(P) :- property(_, P, _).
 
+% -- Utility --
 
-
-% ----- Shapes (General) ------------------------------------------------------
-% -----------------------------------------------------------------------------
-
-% -- Utility and Core
+% #input edgeshape/3. % why is this not working?
+% #input nodeshape/3. % why is this not working?
 
 min(yes,yes,yes).
 min(yes,no,no).
@@ -25,8 +22,14 @@ min(maybe,maybe,maybe).
 min(no,maybe,no).
 min(maybe,no,no).
 
+% -- Core --
+
 constraint(C) :- constraint(and(C,_)).
 constraint(C) :- constraint(and(_,C)).
+constraint(C) :- constraint(greaterEqE(C,_)).
+constraint(C) :- constraint(negate(C)).
+constraint(C) :- constraint(left(C)).
+constraint(C) :- constraint(right(C)).
 constraint(C) :- nodeshape(_,C,_).
 constraint(C) :- edgeshape(_,C,_).
 
@@ -50,12 +53,12 @@ assignE(E,S,R) :- edgeshape(S,C,_), satisfiesE(E,C,R).
 assignN(N,S,yes) | assignN(N,S,no) | assignN(N,S,maybe) :- node(N), nodeshape(S).
 assignE(E,S,yes) | assignE(E,S,no) | assignE(E,S,maybe) :- edge(E), edgeshape(S).
 
-% -- Top --
+% -- top --
 
 satisfiesN(N,top,yes) :- node(N).
 satisfiesE(E,top,yes) :- edge(E).
 
-% -- ShapeRef --
+% -- shapeRef --
 
 satisfiesN(N,shapeRef(S),R) :- node(N), constraint(shapeRef(S)),
                               assignN(N,S,R).
@@ -63,7 +66,7 @@ satisfiesN(N,shapeRef(S),R) :- node(N), constraint(shapeRef(S)),
 satisfiesE(E,shapeRef(S),R) :- edge(E), constraint(shapeRef(S)),
                               assignN(E,S,R).
 
-% -- NodeId/EdgeID --
+% -- nodeId/edgeID --
 
 satisfiesN(N, nodeId(N2), yes) :- node(N), node(N2), N == N2.
 satisfiesN(N, nodeId(N2), no) :- node(N), node(N2), N != N2.
@@ -71,7 +74,7 @@ satisfiesN(N, nodeId(N2), no) :- node(N), node(N2), N != N2.
 satisfiesE(E, edgeId(E2), yes) :- edge(E), edge(E2), E == E2.
 satisfiesE(E, edgeId(E2), no) :- edge(E), edge(E2), E != E2.
 
-% -- Label --
+% -- label --
 
 satisfiesN(N,label(L),yes) :- node(N), constraint(label(L)), label(N,L).
 satisfiesN(N,label(L),no) :- node(N), constraint(label(L)), not label(N,L).
@@ -79,7 +82,7 @@ satisfiesN(N,label(L),no) :- node(N), constraint(label(L)), not label(N,L).
 satisfiesE(E,label(L),yes) :- edge(E), constraint(label(L)), label(E,L).
 satisfiesE(E,label(L),no) :- edge(E), constraint(label(L)), not label(E,L).
 
-% -- Negate --
+% -- negate --
 
 satisfiesN(N, negate(C), yes) :- node(N), constraint(negate(C)),
                                  satisfiesN(N,C,no).
@@ -91,7 +94,7 @@ satisfiesE(E, negate(C), yes) :- edge(E), constraint(negate(C)),
 satisfiesE(E, negate(C), no) :- edge(E), constraint(negate(C)),
                                 satisfiesE(E,C,yes).
 
-% -- And --
+% -- and --
 
 satisfiesN(N,and(C1,C2),R) :- node(N), constraint(and(C1,C2)),
                               satisfiesN(N,C1,R1), satisfiesN(N,C2,R2),
@@ -101,7 +104,7 @@ satisfiesE(E,and(C1,C2),R) :- edge(E), constraint(and(C1,C2)),
                               satisfiesE(E,C1,R1), satisfiesE(E,C2,R2),
                               min(R1,R2,R).
 
-% -- GreaterEq --
+% -- greaterEq --
 
 satisfiesN(N,greaterEq(L,S,I),yes) :- node(N), constraint(greaterEq(L,S,I)),
                                       countShape(N,L,S,C), C >= I.
@@ -110,18 +113,96 @@ satisfiesN(N,greaterEq(L,S,I),no) :- node(N), constraint(greaterEq(L,S,I)),
                                      countAll(N,L,C1), countNoShape(N,L,S,C2),
                                      C1 - C2 < I.
 
-satisfiesN(N,greaterEq(P,S,I), maybe) :- node(N), constraint(greaterEq(P,S,I)),
-                                         countShape(N,L,S,C), not C >= I,
-                                         countAll(N,L,C1),
-                                         countNoShape(N,L,S,C2), not C1 - C2 < I.
+satisfiesN(N,greaterEq(L,S,I), maybe) :- node(N), constraint(greaterEq(L,S,I)),
+                                         not satisfiesN(N,greaterEq(L,S,I),yes),
+                                         not satisfiesN(N,greaterEq(L,S,I),no).
 
-countAll(N,L,C) :- node(N), labels(L), #count { Y: any(N,L,Y) } = C.
-any(N,L,Y) :- edge(N,E,Y), label(E,L).
+countAll(N,L,C) :- node(N), labels(L), 
+                   #count { Y: edge(N,E,Y), label(E,L) } = C.
 
-countShape(N,L,S,C) :- node(N), labels(L), nodeshape(S),
-                       #count { Y: withShape(N,L,S,Y) } = C.
-withShape(N,L,S,Y) :- edge(N,E,Y), label(E,L), assignN(Y,S,yes).
+countShape(N,L,S,C) :- node(N), labels(L), nodeshape(S), 
+                       #count { Y: edge(N,E,Y), label(E,L), assignN(Y,S,yes) } = C.
 
-countNoShape(N,L,S,C) :- node(N), labels(L), nodeshape(S),
-                         #count { Y: withoutShape(N,L,S,Y) } = C.
-withoutShape(N,L,S,Y) :- edge(N,E,Y), label(E,L), assignN(Y,S,no).
+countNoShape(N,L,S,C) :- node(N), labels(L), nodeshape(S), 
+                         #count { Y: edge(N,E,Y), label(E,L), assignN(Y,S,no) } = C.
+
+% -- compare -- TODO
+
+% -- greaterEqE --
+
+satisfiesN(N,greaterEqE(E,I),yes) :- node(N), constraint(greaterEqE(E,I)),
+                                     countSatisfiedEdges(N,E,C), C >= I.
+
+satisfiesN(N,greaterEqE(E,I),no) :- node(N), constraint(greaterEqE(E,I)),
+                                    countAllEdges(N,C1), countUnsatisfiedEdges(N,E,C2), 
+                                    C1 - C2 < I.
+
+satisfiesN(N,greaterEqE(E,I),yes) :- node(N), constraint(greaterEqE(E,I)),
+                                     not satisfiesN(N,greaterEqE(E,I),yes), 
+                                     not satisfiesN(N,greaterEqE(E,I),no).
+
+countSatisfiedEdges(N,EC,C) :- node(N), constraint(EC), 
+                               #count { E: edge(N,E,_), satisfiesE(E,EC,yes) } = C.
+
+countUnsatisfiedEdges(N,EC,C) :- node(N), constraint(EC), 
+                                 #count { E: edge(N,E,_), satisfiesE(E,EC,no) } = C.
+
+countAllEdges(N, C) :- node(N), #count { E: edge(N,E,_) } = C.
+
+% -- countProp --
+
+satisfiesN(N,countProp(K,isString,I),yes) :- node(N), constraint(countProp(K,isString,I)), #count { V: property(N,K,string(V)) } >= I.
+satisfiesN(N,countProp(K,isString,I),no) :- node(N), constraint(countProp(K,isString,I)),  #count { V: property(N,K,string(V)) } < I.
+
+satisfiesN(N,countProp(K,isInteger,I),yes) :- node(N), constraint(countProp(K,isInteger,I)), #count { V: property(N,K,integer(V)) } >= I.
+satisfiesN(N,countProp(K,isInteger,I),no) :- node(N), constraint(countProp(K,isInteger,I)), #count { V: property(N,K,integer(V)) } < I.
+
+satisfiesE(E,countProp(K,isString,I),yes) :- edge(E), constraint(countProp(K,isString,I)), #count { V: property(E,K,string(V)) } >= I.
+satisfiesE(E,countProp(K,isString,I),no) :- edge(E), constraint(countProp(K,isString,I)), #count { V: property(E,K,string(V)) } < I.
+
+satisfiesE(E,countProp(K,isInteger,I),yes) :- edge(E), constraint(countProp(K,isInteger,I)), #count { V: property(E,K,integer(V)) } >= I.
+satisfiesE(E,countProp(K,isInteger,I),no) :- edge(E), constraint(countProp(K,isInteger,I)), #count { V: property(E,K,integer(V)) } < I.
+
+satisfiesN(N,countProp(K,equals(R),I),yes) :- node(N), constraint(countProp(K,equals(R),I)), #count { V: property(N,K,integer(V)), V == R } >= I.
+satisfiesN(N,countProp(K,equals(R),I),no) :- node(N), constraint(countProp(K,equals(R),I)), #count { V: property(N,K,integer(V)), V == R } < I.
+satisfiesN(N,countProp(K,equals(R),I),yes) :- node(N), constraint(countProp(K,equals(R),I)), #count { V: property(N,K,string(V)), V == R } >= I.
+satisfiesN(N,countProp(K,equals(R),I),no) :- node(N), constraint(countProp(K,equals(R),I)), #count { V: property(N,K,string(V)), V == R } < I.
+
+satisfiesE(E,countProp(K,equals(R),I),yes) :- edge(E), constraint(countProp(K,equals(R),I)), #count { V: property(E,K,integer(V)), V == R } >= I.
+satisfiesE(E,countProp(K,equals(R),I),no) :- edge(E), constraint(countProp(K,equals(R),I)), #count { V: property(E,K,integer(V)), V == R } < I.
+satisfiesE(E,countProp(K,equals(R),I),yes) :- edge(E), constraint(countProp(K,equals(R),I)), #count { V: property(E,K,string(V)), V == R } >= I.
+satisfiesE(E,countProp(K,equals(R),I),no) :- edge(E), constraint(countProp(K,equals(R),I)), #count { V: property(E,K,string(V)), V == R } < I.
+
+% -- compareValues -- TODO
+
+% -- equals --
+
+satisfiesN(N,equals(K1,K2),yes) :- node(N), constraint(equals(K1,K2)),
+                                   property(N,K1,V1), property(N,K2,V2),
+                                   V1 == V2.
+
+satisfiesN(N,equals(K1,K2),no) :- node(N), constraint(equals(K1,K2)),
+                                  property(N,K1,V1), property(N,K2,V2),
+                                  V1 != V2.
+
+satisfiesE(E,equals(K1,K2),yes) :- edge(E), constraint(equals(K1,K2)),
+                                   property(E,K1,V1), property(E,K2,V2),
+                                   V1 == V2.
+
+satisfiesE(E,equals(K1,K2),no) :- edge(E), constraint(equals(K1,K2)),
+                                  property(E,K1,V1), property(E,K2,V2),
+                                  V1 != V2.
+
+% -- left/right --
+
+satisfiesE(E,left(NC),yes) :- edge(E), edge(N,E,_), constraint(left(NC)), satisfiesN(N,NC,yes).
+satisfiesE(E,left(NC),no) :- edge(E), edge(N,E,_), constraint(left(NC)), satisfiesN(N,NC,no).
+satisfiesE(E,left(NC),maybe) :- edge(E), edge(N,E,_), constraint(left(NC)), satisfiesN(N,NC,maybe).
+
+satisfiesE(E,right(NC),yes) :- edge(E), edge(_,E,N), constraint(right(NC)), satisfiesN(N,NC,yes).
+satisfiesE(E,right(NC),no) :- edge(E), edge(_,E,N), constraint(right(NC)), satisfiesN(N,NC,no).
+satisfiesE(E,right(NC),maybe) :- edge(E), edge(_,E,N), constraint(right(NC)), satisfiesN(N,NC,maybe).
+
+% -- TODO: Syntactic Sugar Rewriting --
+
+% TODO

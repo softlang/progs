@@ -1,6 +1,3 @@
-% ----- Display ---------------------------------------------------------------
-% -----------------------------------------------------------------------------
-
 % Only show assign/3, i.e., a faithful assignment (or UNSATISFIABLE, otherwise)
 
 #show assignN/3.

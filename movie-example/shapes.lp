@@ -1,2 +1,4 @@
-nodeshape(actorShape, greaterEq(aCTED_IN,moveShape,1), label(person)).
-nodeshape(movieShape, label(movie), bottom).
+nodeshape(movieShape,
+          and(label(movie),
+              countProp(title,isString,1)),
+          label(movie)).
