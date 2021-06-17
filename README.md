@@ -56,7 +56,7 @@ Validation can then be performed as follows:
 ```
 
 where ```<shapes>``` is a file with ASP encoded shapes. The folder [movie-example](movie-example) contains shapes for validating the Neo4j example movie database.
-Note, that we rename all property names and labels, such that the first character is lower case. We also replace " with ' in strings. We only support integer and string property values. All other properties are converted to strings via the Python ```str``` function.
+Note, that we convert all property names and labels to lower case. We also replace " with ' in strings. We only support integer and string property values. All other properties are converted to strings via the Python ```str``` function.
 
 Validation of other property graph models is possible by either exporting graphs in the same JSON format as Neo4j (an then using [translate.py](scripts/translate.py)) or by writing a custom conversion to the ASP encoding used by ProGS.
 

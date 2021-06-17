@@ -5,19 +5,11 @@ import sys
 import getopt
 
 # Note:
-# - We take only the first element of lists (properties) and drop tail!
-# - Any Label or Property Name is modified, such that the first character
-#   is lower case.
-# - We replace " with ' in strings.
-
-def lowerFirst(s):
-    if s:
-        return s[:1].lower() + s[1:]
-    else:
-        return ""
+# - We convert everything to lower case.
+# - We replace " with ' in string values.
 
 def putLabel(i, l):
-    print("label({},{}).".format(i,lowerFirst(l)))
+    print("label({},{}).".format(i,l.lower()))
 
 
 def clean(s):
@@ -27,14 +19,16 @@ def clean(s):
 def typeValue(v):
     if isinstance(v, int):
         return "integer({})".format(v)
-    elif isinstance(v, list):
-        return typeValue(v[0])
     else:
         return "string(\"{}\")".format(clean(str(v)))
 
 
 def putProperty(i, k, v):
-    print("property({},{},{}).".format(i, lowerFirst(k), typeValue(v)))
+    if isinstance(v,list):
+        for vi in v:
+            putProperty(i,k,vi)
+    else:
+        print("property({},{},{}).".format(i, k.lower(), typeValue(v)))
 
 
 def putEdge(n1, e, n2):
