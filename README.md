@@ -20,13 +20,13 @@ copy & paste the contents of [progs.lp](src/progs.lp) (and [display.lp](src/disp
 
 # Execution
 
-After installing ```clingo``` you can run the example program as follows:
+After installing ```clingo``` you can validate the example graph as follows:
 
 ```sh
-./run.sh paper-example/graph.lp paper-example/shapes.lp
+./validate.sh paper-example/graph.lp paper-example/shapes.lp
 ```
 
-By default, this will output only 1 faithful assignment (or UNSATISFIABLE). In order to obtain at most N solutions, supply the additional argument N (see below) to the clingo call. To obtain all solutions, use N = 0.
+By default, this will output only 1 faithful assignment and SATISFIABLE (or UNSATISFIABLE). In order to obtain at most N solutions, supply the additional argument N (see below) to the clingo call. To obtain all solutions, use N = 0.
 
 ```sh
 clingo N src/progs.lp src/display.lp paper-example/graph.lp paper-example/shapes.lp
@@ -46,19 +46,18 @@ TBD
 
 # Validating Neo4j/Cypher Graphs
 
-ProGS can be used to validate Neo4j graphs via the ```run-from-cypher.sh``` script.
-This relies on exporting a cypher graph through the cypher-shell (in JSON format) and converting the JSON encoding to our ASP encoding.
-In order to use this script, you must customize the variables ```cypher```, ```user``` and ```password``` in ```run-from-cypher.sh```.
-Validation can then be performed as follows:
+ProGS can be used to validate Neo4j graphs via the ```validate-neo4j.sh``` script.
+This relies on exporting a cypher graph through the cypher-shell (in JSON format) and converting the JSON encoding to our ASP encoding:
 
 ```sh
-./run-from-cypher.sh <shapes>
+./run-from-cypher.sh <neo4j-db-location> <shapes>
 ```
 
-where ```<shapes>``` is a file with ASP encoded shapes. The folder [movie-example](movie-example) contains shapes for validating the Neo4j example movie database.
+where ```<shapes>``` is a file with ASP encoded shapes and ```<neo4j-db-location>``` the local path of the Neo4j instance. The folder [movie-example](movie-example) contains shapes for validating the Neo4j example movie database.
 Note, that we convert all property names and labels to lower case. We also replace " with ' in strings. We only support integer and string property values. All other properties are converted to strings via the Python ```str``` function.
 
 Validation of other property graph models is possible by either exporting graphs in the same JSON format as Neo4j (an then using [translate.py](scripts/translate.py)) or by writing a custom conversion to the ASP encoding used by ProGS.
+There are also a number of other scripts in the [scripts](scripts) folder, e.g., for validating a JSON dump obtained by other means, such as through the Neo4j management tool.
 
 # References
 
@@ -67,8 +66,7 @@ features a prototypical ASP-based validation engine. See also [this](https://lab
 
 # TODO
 
-- Fix ```translate.py```: Should output all properties.
 - Figure out how to write & run tests with Clingo. Add test cases.
 - Implement path evaluation and missing constraints. Update greaterEq to use paths.
-- Change encoding of property names and labels to quoted strings.
+- Change encoding of property names and labels to quoted strings (maybe?).
 - Add rewriting rules for syntactic sugar.
