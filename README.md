@@ -7,7 +7,9 @@ Clingo is free software published under the MIT license. The GitHub repository c
 
 On Debian and derivatives, Clingo is available through two separate packages:
 
-```sudo apt install gringo clasp```
+```sh
+sudo apt install gringo clasp
+```
 
 ## Other platforms
 
