@@ -57,7 +57,7 @@ where ```<shapes>``` is a file with ASP encoded shapes and ```<neo4j-db-location
 Note, that we convert all property names and labels to lower case. We also replace " with ' in strings. We only support integer and string property values. All other properties are converted to strings via the Python ```str``` function.
 
 Validation of other property graph models is possible by either exporting graphs in the same JSON format as Neo4j (an then using [translate.py](scripts/translate.py)) or by writing a custom conversion to the ASP encoding used by ProGS.
-There are also a number of other scripts in the [scripts](scripts) folder, e.g., for validating a JSON dump obtained by other means, such as through the Neo4j management tool.
+There are also a number of other scripts in the [scripts](scripts) folder, e.g., for validating a JSON dump obtained by other means, such as through the Neo4j Browser or a remote Neo4j instance.
 
 # References
 
@@ -66,7 +66,6 @@ features a prototypical ASP-based validation engine. See also [this](https://lab
 
 # TODO
 
-- Figure out how to write & run tests with Clingo. Add test cases.
+- Write test cases.
 - Implement path evaluation and missing constraints. Update greaterEq to use paths.
-- Change encoding of property names and labels to quoted strings (maybe?).
 - Add rewriting rules for syntactic sugar.

@@ -12,6 +12,6 @@ tmpfile=$(mktemp /tmp/exported-neo4j-json-dump-XXX.json)
 
 ./scripts/export-db.sh "$1" "$tmpfile"
 
-./scripts/validate-neo4j-dump.sh "exported.json" "$2"
+./scripts/validate-neo4j-dump.sh "$tmpfile" "$2"
 
 rm "$tmpfile"
