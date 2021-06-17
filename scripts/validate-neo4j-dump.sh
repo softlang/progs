@@ -10,6 +10,6 @@ tmpfile=$(mktemp /tmp/converted-neo4j-dump-XXX.lp)
 
 ./scripts/translate.py -i "$1" > "$tmpfile"
 
-clingo src/progs.lp src/display.lp "$tmpfile" "$2"
+./validate.sh "$tmpfile" "$2"
 
 rm "$tmpfile"
