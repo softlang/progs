@@ -68,5 +68,7 @@ features a prototypical ASP-based validation engine. See also [this](https://lab
 
 - Figure out how to write & run tests with Clingo. Add test cases.
 - Implement path evaluation and missing constraints. Update greaterEq to use paths.
-- Change encoding of property names and labels to quoted strings (maybe?).
-- Add rewriting rules for syntactic sugar.
+- Implement abstract syntax in, e.g., Haskell or Python:
+  - that implements syntactic sugar
+  - that is translated to more efficient ASP program (e.g., constraint/1)
+  - that allows (efficient) validation of shape syntax
