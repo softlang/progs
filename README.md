@@ -74,3 +74,7 @@ features a prototypical ASP-based validation engine. See also [this](https://lab
 - Write test cases.
 - Implement path evaluation and missing constraints. Update greaterEq to use paths.
 - Add rewriting rules for syntactic sugar.
+- Implement abstract syntax in, e.g., Haskell or Python:
+  - that implements syntactic sugar
+  - that is translated to more efficient ASP program (e.g., constraint/1)
+  - that allows (efficient) validation of shape syntax
