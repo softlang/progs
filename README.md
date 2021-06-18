@@ -1,7 +1,12 @@
 # Setup
 
-Running prototypical ProGS validation only requires the [Clingo](https://potassco.org/clingo/) ASP system, which consists of the Gringo grounder and Clasp solver.
+Running prototypical ProGS validation requires the [Clingo](https://potassco.org/clingo/) ASP system, which consists of the Gringo grounder and Clasp solver.
 Clingo is free software published under the MIT license. The GitHub repository can be found [here](https://github.com/potassco/clingo).
+In addition, Python 3 is required. Bash is required for utility scripts only. Python requirements can be installed with:
+
+```sh
+pip install -r requirements.txt
+```
 
 ## Debian/Ubuntu
 
