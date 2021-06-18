@@ -1,0 +1,2 @@
+NODE employeeShape [:employee] {:employee & >= 1 :worksFor.organizationShape};
+NODE organizationShape [BOTTOM] {:company};

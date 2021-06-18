@@ -81,29 +81,30 @@ def handleEdge(data):
 
 
 def main(argv):
-    infile="graph.json"
+    infile = 'graph.json'
+    usage = "Usage: translate.py -i <inputfile>"
     try:
-        opts, args = getopt.getopt(argv,"hi:",["ifile="])
+        opts, args = getopt.getopt(argv,'hi:',['ifile='])
     except getopt.GetoptError:
-        print("Usage: translate.py -i <inputfile>")
+        print(usage)
         sys.exit(1)
     for opt,arg in opts:
       if opt == '-h':
-         print('test.py -i <inputfile>')
+         print(usage)
          sys.exit()
-      elif opt in ("-i", "--ifile"):
+      elif opt in ('-i', '--ifile'):
          infile = arg
 
     with open(infile) as f:
         for line in f:
             try:
                 data = json.loads(line)
-                if data["type"] == "node":
+                if data['type'] == 'node':
                     handleNode(data)
                 else:
                     handleEdge(data)
             except:
                 sys.stderr.write("[WARNING] Ignoring malformed JSON: " + json.dumps(data) + "\n")
 
-if __name__ == "__main__":
+if __name__ == '__main__':
    main(sys.argv[1:])

@@ -1,0 +1,4 @@
+NODE movieShape [:movie] { 
+    :movie &
+    >=1 title.string 
+};

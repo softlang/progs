@@ -4,4 +4,10 @@
 
 [ $# -ne 2 ] && echo "Usage: ./validate.sh <graph> <shapes>" && exit
 
-clingo src/progs.lp src/display.lp "$1" "$2"
+tmpfile=$(mktemp /tmp/converted-shapes-XXX.lp)
+
+./scripts/shapeTranslator.py -i "$2" > "$tmpfile"
+
+clingo src/progs.lp src/display.lp "$1" "$tmpfile"
+
+rm "$tmpfile"

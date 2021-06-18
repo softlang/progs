@@ -1,0 +1,71 @@
+shapes : (nodeshape | edgeshape)*
+nodeshape : "NODE" shape "[" nodetarget "]" "{" nodeconstraint "}" ";"
+edgeshape : "EDGE" shape "[" edgetarget "]" "{" edgeconstraint "}" ";"
+
+nodetarget : ":" label
+              | NUMBER -> nid
+	      | "BOTTOM" -> bot
+	      | property -> property
+
+?nodeconstraint : nodeconstraint_or
+?nodeconstraint_or : [nodeconstraint_or "|"] nodeconstraint_and
+?nodeconstraint_and  : [nodeconstraint_and "&"] nodeconstraint_basic
+nodeconstraint_basic : "TOP" -> top
+                      | "BOTTOM" -> bot
+                      | shape
+                      | ":" label
+		      | NUMBER -> rnid
+		      | "!" nodeconstraint -> negate
+		      | comp NUMBER path "." nodeconstraint -> greatereq
+		      | comp NUMBER property "." predicate -> countprop
+		      | comp NUMBER edgeconstraint -> greatereqe
+		      | path "==" path -> compare
+		      | path property "==" path property -> comparevalue
+		      | property "==" property -> equals
+                      | "(" nodeconstraint ")"
+
+path : ":" labelref
+
+predicate : "string" -> string
+          | "int" -> int
+
+edgetarget : ":" label
+              | NUMBER -> eid
+	      | "BOTTOM" -> bot
+	      | property -> property
+
+?edgeconstraint : edgeconstraint_or
+?edgeconstraint_or : [edgeconstraint_or "|"] edgeconstraint_and
+?edgeconstraint_and  : [edgeconstraint_and "&"] edgeconstraint_basic
+edgeconstraint_basic : "TOP" -> top
+                      | "BOTTOM" -> bot
+		      | shape
+                      | ":" label
+		      | NUMBER -> reid
+		      | "!" edgeconstraint -> negate
+		      | comp NUMBER property "." predicate -> countprop
+		      | property "==" property -> equals
+		      | "<<" nodeconstraint -> left
+		      | ">>" nodeconstraint -> right
+                      | "(" edgeconstraint ")"
+
+comp : "<=" -> le
+     | ">=" -> ge
+     | ">" -> gr
+     | "<" -> ls
+     | "=" -> eq
+
+shape : WORD
+label : WORD
+property : WORD
+labelref : WORD
+
+WORD : LCASE_LETTER CHAR+
+CHAR : LETTER | DIGIT
+NUMBER : DIGIT+
+
+%import common.LCASE_LETTER
+%import common.LETTER
+%import common.DIGIT
+%import common.WS
+%ignore WS

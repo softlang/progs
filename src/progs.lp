@@ -24,15 +24,6 @@ min(maybe,no,no).
 
 % -- Core --
 
-constraint(C) :- constraint(and(C,_)).
-constraint(C) :- constraint(and(_,C)).
-constraint(C) :- constraint(greaterEqE(C,_)).
-constraint(C) :- constraint(negate(C)).
-constraint(C) :- constraint(left(C)).
-constraint(C) :- constraint(right(C)).
-constraint(C) :- nodeshape(_,C,_).
-constraint(C) :- edgeshape(_,C,_).
-
 nodeshape(S) :- nodeshape(S,_,_).
 edgeshape(S) :- edgeshape(S,_,_).
 
@@ -57,6 +48,9 @@ assignE(E,S,yes) | assignE(E,S,no) | assignE(E,S,maybe) :- edge(E), edgeshape(S)
 
 satisfiesN(N,top,yes) :- node(N).
 satisfiesE(E,top,yes) :- edge(E).
+
+satisfiesN(N,bottom,no) :- node(N).
+satisfiesE(E,bottom,no) :- edge(E).
 
 % -- shapeRef --
 
@@ -202,7 +196,3 @@ satisfiesE(E,left(NC),maybe) :- edge(E), edge(N,E,_), constraint(left(NC)), sati
 satisfiesE(E,right(NC),yes) :- edge(E), edge(_,E,N), constraint(right(NC)), satisfiesN(N,NC,yes).
 satisfiesE(E,right(NC),no) :- edge(E), edge(_,E,N), constraint(right(NC)), satisfiesN(N,NC,no).
 satisfiesE(E,right(NC),maybe) :- edge(E), edge(_,E,N), constraint(right(NC)), satisfiesN(N,NC,maybe).
-
-% -- TODO: Syntactic Sugar Rewriting --
-
-% TODO
