@@ -64,35 +64,80 @@ class ShapeTransformer(Transformer):
         return p[0]
 
     def greatereq(self, p):
-        c = {
-            'ge': 'greaterEq({},{},{})'.format(p[2],p[3],p[1]),
-            'le' : 'negate(greaterEq({},{},{}))'.format(p[2],p[3],p[1]+1),
-            'eq' : 'and(negate(greaterEq({},{},{})), greaterEq({},{},{}))'.format(p[2],p[3],p[1]+1,p[2],p[3],p[1]),
-            'gr': 'greaterEq({},{},{})'.format(p[2],p[3],p[1]+1),
-            'ls' : 'negate(greaterEq({},{},{}))'.format(p[2],p[3],p[1]),
-        }[p[0].data]
+        dat = p[0].data
+        c = ''
+        if dat == 'ge':
+            c = 'greaterEq({},{},{})'.format(p[2],p[3],p[1])
+        elif dat == 'le':
+            c1 = 'greaterEq({},{},{})'.format(p[2],p[3],p[1]+1)
+            constraint_store.add(c1)
+            c = 'negate({})'.format(c1),
+        elif dat == 'eq':
+            c1 = 'greaterEq({},{},{})'.format(p[2],p[3],p[1]+1)
+            c2 = 'greaterEq({},{},{})'.format(p[2],p[3],p[1])
+            c3 = 'negate({})'.format(c1)
+            constraint_store.add(c1)
+            constraint_store.add(c2)
+            constraint_store.add(c3)
+            c = 'and({},{})'.format(c2,c3)
+        elif dat == 'gr': 
+            c = 'greaterEq({},{},{})'.format(p[2],p[3],p[1]+1)
+        else: # ls
+            c1 = 'greaterEq({},{},{})'.format(p[2],p[3],p[1])
+            constraint_store.add(c1)
+            c = 'negate({})'.format(c1),
         constraint_store.add(c)
         return c
 
     def greatereqe(self, p):
-        c = {
-            'ge': 'greaterEqE({},{})'.format(p[2],p[1]),
-            'le' : 'negate(greaterEqE({},{}))'.format(p[2],p[1]+1),
-            'eq' : 'and(negate(greaterEqE({},{})), greaterEq({},{}))'.format(p[2],p[1]+1,p[2],p[1]),
-            'gr': 'greaterEqE({},{})'.format(p[2],p[1]+1),
-            'ls' : 'negate(greaterEqE({},{}))'.format(p[2],p[1]),
-        }[p[0].data]
+        dat = p[0].data
+        c = ''
+        if dat == 'ge':
+            c = 'greaterEqE({},{})'.format(p[2],p[1])
+        elif dat == 'le':
+            c1 = 'greaterEqE({},{})'.format(p[2],p[1]+1)
+            constraint_store.add(c1)
+            c = 'negate({})'.format(c1),
+        elif dat == 'eq':
+            c1 = 'greaterEqE({},{})'.format(p[2],p[1]+1)
+            c2 = 'greaterEqE({},{})'.format(p[2],p[1])
+            c3 = 'negate({})'.format(c1)
+            constraint_store.add(c1)
+            constraint_store.add(c2)
+            constraint_store.add(c3)
+            c = 'and({},{})'.format(c2,c3)
+        elif dat == 'gr': 
+            c = 'greaterEqE({},{})'.format(p[2],p[1]+1)
+        else: # ls
+            c1 = 'greaterEqE({},{})'.format(p[2],p[1])
+            constraint_store.add(c1)
+            c = 'negate({})'.format(c1),
         constraint_store.add(c)
         return c
 
     def countprop(self, p):
-        c = {
-            'ge': 'countProp({},{},{})'.format(p[2],p[3],p[1]),
-            'le' : 'negate(countProp({},{},{}))'.format(p[2],p[3],p[1]+1),
-            'eq' : 'and(negate(countProp({},{},{})), countProp({},{},{}))'.format(p[2],p[3],p[1]+1,p[2],p[3],p[1]),
-            'gr': 'countProp({},{},{})'.format(p[2],p[3],p[1]+1),
-            'ls' : 'negate(countProp({},{},{}))'.format(p[2],p[3],p[1]),
-        }[p[0].data]
+        dat = p[0].data
+        c = ''
+        if dat == 'ge':
+            c = 'countProp({},{},{})'.format(p[2],p[3],p[1])
+        elif dat == 'le':
+            c1 = 'countProp({},{},{})'.format(p[2],p[3],p[1]+1)
+            constraint_store.add(c1)
+            c = 'negate({})'.format(c1),
+        elif dat == 'eq':
+            c1 = 'countProp({},{},{})'.format(p[2],p[3],p[1]+1)
+            c2 = 'countProp({},{},{})'.format(p[2],p[3],p[1])
+            c3 = 'negate({})'.format(c1)
+            constraint_store.add(c1)
+            constraint_store.add(c2)
+            constraint_store.add(c3)
+            c = 'and({},{})'.format(c2,c3)
+        elif dat == 'gr': 
+            c = 'countProp({},{},{})'.format(p[2],p[3],p[1]+1)
+        else: # ls
+            c1 = 'countProp({},{},{})'.format(p[2],p[3],p[1])
+            constraint_store.add(c1)
+            c = 'negate({})'.format(c1),
         constraint_store.add(c)
         return c
 

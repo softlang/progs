@@ -1,4 +1,4 @@
-shapes : (nodeshape | edgeshape)*
+shapes : (nodeshape | edgeshape | COMMENT)*
 nodeshape : "NODE" shape "[" nodetarget "]" "{" nodeconstraint "}" ";"
 edgeshape : "EDGE" shape "[" edgetarget "]" "{" edgeconstraint "}" ";"
 
@@ -61,11 +61,15 @@ property : WORD
 labelref : WORD
 
 WORD : LCASE_LETTER CHAR+
-CHAR : LETTER | DIGIT
+CHAR : LETTER | DIGIT | "_"
 NUMBER : DIGIT+
+
+COMMENT : "//" /(.)+/ NEWLINE
 
 %import common.LCASE_LETTER
 %import common.LETTER
+%import common.NEWLINE
 %import common.DIGIT
 %import common.WS
 %ignore WS
+%ignore COMMENT

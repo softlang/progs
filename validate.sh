@@ -8,6 +8,8 @@ tmpfile=$(mktemp /tmp/converted-shapes-XXX.lp)
 
 ./scripts/shapeTranslator.py -i "$2" > "$tmpfile"
 
+cat "$tmpfile"
+
 clingo src/progs.lp src/display.lp "$1" "$tmpfile"
 
 rm "$tmpfile"
