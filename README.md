@@ -28,21 +28,40 @@ copy & paste the contents of [progs.lp](src/progs.lp) (and [display.lp](src/disp
 After installing ```clingo``` you can validate the example graph as follows:
 
 ```sh
-./validate.sh paper-example/graph.lp paper-example/shapes.lp
+./validate.sh paper-example/graph.lp paper-example/shapes.progs
 ```
 
 By default, this will output only 1 faithful assignment and SATISFIABLE (or UNSATISFIABLE). In order to obtain at most N solutions, supply the additional argument N (see below) to the clingo call. To obtain all solutions, use N = 0.
 
 ```sh
-clingo N src/progs.lp src/display.lp paper-example/graph.lp paper-example/shapes.lp
+clingo N src/progs.lp src/display.lp paper-example/graph.lp paper-example/shapes.progs
 ```
 
 # Validation
 
 The examples in folder [paper-example](paper-example) demonstrate the usage of this validator.
 It requires encoding a property graph using the predicates ```edge/3```, ```label/2``` and ```property/3```, which correspond to the components <img src="https://render.githubusercontent.com/render/math?math=\rho">, <img src="https://render.githubusercontent.com/render/math?math=\lambda"> and <img src="https://render.githubusercontent.com/render/math?math=\sigma"> of a property graph <img src="https://render.githubusercontent.com/render/math?math=G = (N,E,\rho,\lambda,\sigma)">.
-Node and edge shapes can be defined using ```nodeshape/3``` and ```edgeshape/3```.
-For the abstract syntax of constraints and target queries, please see [shapes.lp](paper-example/shapes.lp) or inspect [progs.lp](src/progs.lp).
+Node and edge shapes can be defined using a concrete syntax defined by the grammar in [grammar.ebnf](src/grammar.ebnf).
+For the examples of the concrete syntax of constraints and target queries, please see [shapes.progs](paper-example/shapes.progs) or [shapes.progs](movie-example/shapes.progs) or the example below.
+
+```
+NODE movieShape [:movie] { 
+    :movie &
+    =1 title.string 
+};
+
+NODE actorShape [BOTTOM] {
+    :person &
+    >=1 :acted_in.movieShape &
+    >=1 name.string
+};
+
+EDGE actedInShape [:acted_in] {
+    << actorShape &
+    >> movieShape
+};
+```
+
 For more information about the ProGS shape validation language, see the following [paper](http://www.google.de):
 
 ```bibtex
@@ -62,7 +81,11 @@ where ```<shapes>``` is a file with ASP encoded shapes and ```<neo4j-db-location
 Note, that we convert all property names and labels to lower case. We also replace " with ' in strings. We only support integer and string property values. All other properties are converted to strings via the Python ```str``` function.
 
 Validation of other property graph models is possible by either exporting graphs in the same JSON format as Neo4j (an then using [translate.py](scripts/translate.py)) or by writing a custom conversion to the ASP encoding used by ProGS.
-There are also a number of other scripts in the [scripts](scripts) folder, e.g., for validating a JSON dump obtained by other means, such as through the Neo4j Browser or a remote Neo4j instance.
+There are also a number of other scripts in the [scripts](scripts) folder, e.g., for validating a JSON dump obtained by other means, such as through the Neo4j Browser or a remote Neo4j instance:
+
+```sh
+./scripts/validate-neo4j-dump.sh <json> <shapes>
+```
 
 # References
 
@@ -71,10 +94,5 @@ features a prototypical ASP-based validation engine. See also [this](https://lab
 
 # TODO
 
-- Write test cases.
+- Write test cases (and perhaps a simple test framework?)
 - Implement path evaluation and missing constraints. Update greaterEq to use paths.
-- Add rewriting rules for syntactic sugar.
-- Implement abstract syntax in, e.g., Haskell or Python:
-  - that implements syntactic sugar
-  - that is translated to more efficient ASP program (e.g., constraint/1)
-  - that allows (efficient) validation of shape syntax
