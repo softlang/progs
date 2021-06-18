@@ -96,3 +96,4 @@ features a prototypical ASP-based validation engine. See also [this](https://lab
 
 - Write test cases (and perhaps a simple test framework?)
 - Implement path evaluation and missing constraints. Update greaterEq to use paths.
+- Allow list of targets in "[" "]", where bottom is just "[]".
