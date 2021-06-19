@@ -5,6 +5,7 @@ import getopt
 from lark import Lark, Transformer
 
 constraint_store = set()
+path_store = set()
 
 class ShapeTransformer(Transformer):
 
@@ -29,6 +30,33 @@ class ShapeTransformer(Transformer):
 
     def property(self, k):
         return "hasProperty({})".format(k[0])
+
+    def shaperef(self, s):
+        c = 'shapeRef({})'.format(s[0])
+        constraint_store.add(c)
+        return c
+
+    # Paths
+
+    def concatpath(self, ps):
+        p = 'concatpath({},{})'.format(ps[0],ps[1])
+        path_store.add(p)
+        return p
+
+    def negatepath(self, ps):
+        p = 'negatepath({})'.format(ps[0])
+        path_store.add(p)
+        return p
+
+    def choicepath(self, ps):
+        p = 'choicepath({},{})'.format(ps[0],ps[1])
+        path_store.add(p)
+        return p
+
+    def repeatpath(self, ps):
+        p = 'repeatpath({})'.format(ps[0])
+        path_store.add(p)
+        return p
 
     # Node Constraint
 
@@ -61,7 +89,9 @@ class ShapeTransformer(Transformer):
         return c
 
     def path(self, p):
-        return p[0]
+        p = p[0]
+        path_store.add(p)
+        return p
 
     def greatereq(self, p):
         dat = p[0].data
@@ -219,8 +249,18 @@ class ShapeTransformer(Transformer):
     def NUMBER(self, nr):
         return int(nr)
 
+
+def print_paths():
+    paths = list(path_store)
+    paths.sort()
+    for p in paths:
+        print('path({}).'.format(p))
+
+
 def print_constraints():
-    for c in constraint_store:
+    constraints = list(constraint_store)
+    constraints.sort()
+    for c in constraints:
         print('constraint({}).'.format(c))
 
 
@@ -245,13 +285,15 @@ def main(argv):
 
     shapes = ''
     with open(infile, 'r') as file:
-        shapes = file.read()
+        shapes = file.read() + '\n'
 
     shape_parser = Lark(grammar, start='shapes')
 
     tree = shape_parser.parse(shapes)
     transformed = ShapeTransformer().transform(tree)
+
     print_constraints()
+    print_paths()
     print(transformed)
 
 if __name__ == '__main__':

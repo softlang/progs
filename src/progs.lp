@@ -44,6 +44,16 @@ assignE(E,S,R) :- edgeshape(S,C,_), satisfiesE(E,C,R).
 assignN(N,S,yes) | assignN(N,S,no) | assignN(N,S,maybe) :- node(N), nodeshape(S).
 assignE(E,S,yes) | assignE(E,S,no) | assignE(E,S,maybe) :- edge(E), edgeshape(S).
 
+% -- paths --
+
+path(N1,N2,label(P)) :- edge(N1,E,N2), label(E,P).
+path(N1,N2,concatpath(P1,P2)) :- path(P1), path(P2), path(N1,N,P1), path(N,N2,P2).
+path(N1,N2,negatepath(P)) :- path(P), path(N2,N1,P).
+path(N1,N2,choicepath(P1,P2)) :- path(P1), path(P2), path(N1,N2,P1).
+path(N1,N2,choicepath(P1,P2)) :- path(P1), path(P2), path(N1,N2,P2).
+path(N1,N2,repeatpath(P)) :- path(P), path(N1,N2,P).
+path(N1,N2,repeatpath(P)) :- path(P), path(N1,N,P), path(N,N2,repeatpath(P)).
+
 % -- top --
 
 satisfiesN(N,top,yes) :- node(N).
@@ -58,7 +68,7 @@ satisfiesN(N,shapeRef(S),R) :- node(N), constraint(shapeRef(S)),
                               assignN(N,S,R).
 
 satisfiesE(E,shapeRef(S),R) :- edge(E), constraint(shapeRef(S)),
-                              assignN(E,S,R).
+                              assignE(E,S,R).
 
 % -- nodeId/edgeID --
 
@@ -100,25 +110,25 @@ satisfiesE(E,and(C1,C2),R) :- edge(E), constraint(and(C1,C2)),
 
 % -- greaterEq --
 
-satisfiesN(N,greaterEq(L,S,I),yes) :- node(N), constraint(greaterEq(L,S,I)),
-                                      countShape(N,L,S,C), C >= I.
+satisfiesN(N,greaterEq(P,NC,I),yes) :- node(N), constraint(greaterEq(P,NC,I)),
+                                      countNC(N,P,NC,C), C >= I.
 
-satisfiesN(N,greaterEq(L,S,I),no) :- node(N), constraint(greaterEq(L,S,I)),
-                                     countAll(N,L,C1), countNoShape(N,L,S,C2),
+satisfiesN(N,greaterEq(P,NC,I),no) :- node(N), constraint(greaterEq(P,NC,I)),
+                                     countAll(N,P,C1), countNoNC(N,P,NC,C2),
                                      C1 - C2 < I.
 
-satisfiesN(N,greaterEq(L,S,I), maybe) :- node(N), constraint(greaterEq(L,S,I)),
-                                         not satisfiesN(N,greaterEq(L,S,I),yes),
-                                         not satisfiesN(N,greaterEq(L,S,I),no).
+satisfiesN(N,greaterEq(P,NC,I), maybe) :- node(N), constraint(greaterEq(P,NC,I)),
+                                         not satisfiesN(N,greaterEq(P,NC,I),yes),
+                                         not satisfiesN(N,greaterEq(P,NC,I),no).
 
-countAll(N,L,C) :- node(N), labels(L), 
-                   #count { Y: edge(N,E,Y), label(E,L) } = C.
+countAll(N,P,C) :- node(N), path(P), 
+                   #count { Y: path(N,Y,P) } = C.
 
-countShape(N,L,S,C) :- node(N), labels(L), nodeshape(S), 
-                       #count { Y: edge(N,E,Y), label(E,L), assignN(Y,S,yes) } = C.
+countNC(N,P,NC,C) :- node(N), path(P), constraint(NC), 
+                     #count { Y: path(N,Y,P), satisfiesN(Y,NC,yes) } = C.
 
-countNoShape(N,L,S,C) :- node(N), labels(L), nodeshape(S), 
-                         #count { Y: edge(N,E,Y), label(E,L), assignN(Y,S,no) } = C.
+countNoNC(N,P,NC,C) :- node(N), path(P), constraint(NC), 
+                       #count { Y: path(N,Y,P), satisfiesN(Y,NC,no) } = C.
 
 % -- compare -- TODO
 
@@ -189,10 +199,5 @@ satisfiesE(E,equals(K1,K2),no) :- edge(E), constraint(equals(K1,K2)),
 
 % -- left/right --
 
-satisfiesE(E,left(NC),yes) :- edge(E), edge(N,E,_), constraint(left(NC)), satisfiesN(N,NC,yes).
-satisfiesE(E,left(NC),no) :- edge(E), edge(N,E,_), constraint(left(NC)), satisfiesN(N,NC,no).
-satisfiesE(E,left(NC),maybe) :- edge(E), edge(N,E,_), constraint(left(NC)), satisfiesN(N,NC,maybe).
-
-satisfiesE(E,right(NC),yes) :- edge(E), edge(_,E,N), constraint(right(NC)), satisfiesN(N,NC,yes).
-satisfiesE(E,right(NC),no) :- edge(E), edge(_,E,N), constraint(right(NC)), satisfiesN(N,NC,no).
-satisfiesE(E,right(NC),maybe) :- edge(E), edge(_,E,N), constraint(right(NC)), satisfiesN(N,NC,maybe).
+satisfiesE(E,left(NC),R) :- edge(E), edge(N,E,_), constraint(left(NC)), satisfiesN(N,NC,R).
+satisfiesE(E,right(NC),R) :- edge(E), edge(_,E,N), constraint(right(NC)), satisfiesN(N,NC,R).

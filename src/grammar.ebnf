@@ -4,49 +4,54 @@ edgeshape : "EDGE" shape "[" edgetarget "]" "{" edgeconstraint "}" ";"
 
 nodetarget : ":" label
               | NUMBER -> nid
-	      | "BOTTOM" -> bot
-	      | property -> property
+              | "BOTTOM" -> bot
+              | property -> property
 
 ?nodeconstraint : nodeconstraint_or
 ?nodeconstraint_or : [nodeconstraint_or "|"] nodeconstraint_and
 ?nodeconstraint_and  : [nodeconstraint_and "&"] nodeconstraint_basic
 nodeconstraint_basic : "TOP" -> top
                       | "BOTTOM" -> bot
-                      | shape
+                      | shape -> shaperef
                       | ":" label
-		      | NUMBER -> rnid
-		      | "!" nodeconstraint -> negate
-		      | comp NUMBER path "." nodeconstraint -> greatereq
-		      | comp NUMBER property "." predicate -> countprop
-		      | comp NUMBER edgeconstraint -> greatereqe
-		      | path "==" path -> compare
-		      | path property "==" path property -> comparevalue
-		      | property "==" property -> equals
+                      | NUMBER -> rnid
+                      | "!" nodeconstraint_basic -> negate
+                      | comp NUMBER choicepath "." nodeconstraint_basic -> greatereq
+                      | comp NUMBER property "." predicate -> countprop
+                      | comp NUMBER edgeconstraint -> greatereqe
+                      | choicepath "==" choicepath -> compare
+                      | choicepath property "==" path property -> comparevalue
+                      | property "==" property -> equals
                       | "(" nodeconstraint ")"
 
-path : ":" labelref
+?choicepath : [choicepath "|"] concatpath
+?concatpath : [concatpath "/"] path
+path : ":" label
+     | "-" path -> negatepath
+     | "(" choicepath ")"
+     | path "+" -> repeatpath
 
 predicate : "string" -> string
           | "int" -> int
 
 edgetarget : ":" label
               | NUMBER -> eid
-	      | "BOTTOM" -> bot
-	      | property -> property
+              | "BOTTOM" -> bot
+              | property -> property
 
 ?edgeconstraint : edgeconstraint_or
 ?edgeconstraint_or : [edgeconstraint_or "|"] edgeconstraint_and
 ?edgeconstraint_and  : [edgeconstraint_and "&"] edgeconstraint_basic
 edgeconstraint_basic : "TOP" -> top
                       | "BOTTOM" -> bot
-		      | shape
+                      | shape -> shaperef
                       | ":" label
-		      | NUMBER -> reid
-		      | "!" edgeconstraint -> negate
-		      | comp NUMBER property "." predicate -> countprop
-		      | property "==" property -> equals
-		      | "<<" nodeconstraint -> left
-		      | ">>" nodeconstraint -> right
+                      | NUMBER -> reid
+                      | "!" edgeconstraint_basic -> negate
+                      | comp NUMBER property "." predicate -> countprop
+                      | property "==" property -> equals
+                      | "<<" nodeconstraint_basic -> left
+                      | ">>" nodeconstraint_basic -> right
                       | "(" edgeconstraint ")"
 
 comp : "<=" -> le
@@ -64,7 +69,7 @@ WORD : LCASE_LETTER CHAR+
 CHAR : LETTER | DIGIT | "_"
 NUMBER : DIGIT+
 
-COMMENT : "//" /(.)+/ NEWLINE
+COMMENT : "%" /(.)*/ NEWLINE
 
 %import common.LCASE_LETTER
 %import common.LETTER

@@ -1,8 +1,7 @@
 NODE employeeShape [:employee] {
-    :employee & 
-    >= 1 :worksFor.organizationShape
+    >= 1 worksForShape
 };
 
-NODE organizationShape [BOTTOM] {
-    :company
+EDGE worksForShape [BOTTOM] {
+    :worksFor
 };

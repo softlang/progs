@@ -6,7 +6,7 @@ NODE movieShape [:movie] {
 NODE actorShape [BOTTOM] {
     :person &
     >=1 :acted_in.movieShape &
-    >=1 name.string
+    =1 name.string
 };
 
 EDGE actedInShape [:acted_in] {
@@ -17,7 +17,7 @@ EDGE actedInShape [:acted_in] {
 NODE directorShape [BOTTOM] {
     :person &
     >=1 :directed.movieShape &
-    >=1 name.string
+    =1 name.string
 };
 
 EDGE directedShape [:directed] {
@@ -28,7 +28,7 @@ EDGE directedShape [:directed] {
 NODE producerShape [BOTTOM] {
     :person &
     >=1 :produced.movieShape &
-    >=1 name.string
+    =1 name.string
 };
 
 EDGE producedShape [:produced] {
@@ -39,7 +39,7 @@ EDGE producedShape [:produced] {
 NODE writerShape [BOTTOM] {
     :person &
     >=1 :wrote.movieShape &
-    >=1 name.string
+    =1 name.string
 };
 
 EDGE wroteShape [:wrote] {
