@@ -72,7 +72,7 @@ TBD
 
 More details about the ASP encoding can also be found in an extended [report](http://www.google.de).
 
-# Validating Neo4j/Cypher Graphs
+### Validating Neo4j/Cypher Graphs
 
 ProGS can be used to validate Neo4j graphs via the ```validate-neo4j.sh``` script.
 This relies on exporting a cypher graph through the cypher-shell (in JSON format) and converting the JSON encoding to our ASP encoding:
