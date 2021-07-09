@@ -8,7 +8,7 @@ tmpfile=$(mktemp /tmp/converted-neo4j-dump-XXX.lp)
 
 # Convert from JSON to ASP encoding.
 
-./scripts/graph-encoder.py -i "$1" > "$tmpfile"
+./scripts/graphEncoder.py -i "$1" > "$tmpfile"
 
 ./validate.sh "$tmpfile" "$2"
 

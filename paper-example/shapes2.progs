@@ -1,0 +1,3 @@
+NODE s1 [:employee] {
+    >= 1 :colleagueOf . :person
+}

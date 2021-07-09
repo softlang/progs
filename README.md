@@ -77,7 +77,8 @@ This relies on exporting a cypher graph through the cypher-shell (in JSON format
 ./run-from-cypher.sh <neo4j-db-location> <shapes>
 ```
 
-where ```<shapes>``` is a file with ASP encoded shapes and ```<neo4j-db-location>``` the local path of the Neo4j instance. The folder [movie-example](movie-example) contains shapes for validating the Neo4j example movie database.
+where ```<shapes>``` is a file with ASP encoded shapes and ```<neo4j-db-location>``` the local path of the Neo4j instance. Note, that the configuration option ```apoc.export.file.enabled=true``` has to be set.
+The folder [movie-example](movie-example) contains shapes for validating the Neo4j example movie database.
 Note, that we convert all property names and labels to lower case. We also replace " with ' in strings. We only support integer and string property values. All other properties are converted to strings via the Python ```str``` function.
 
 Validation of other property graph models is possible by either exporting graphs in the same JSON format as Neo4j (an then using [translate.py](scripts/translate.py)) or by writing a custom conversion to the ASP encoding used by ProGS.

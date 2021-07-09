@@ -6,7 +6,7 @@
 
 tmpfile=$(mktemp /tmp/converted-shapes-XXX.lp)
 
-./scripts/shape-transpiler.py -i "$2" > "$tmpfile"
+./scripts/shapeTranspiler.py -i "$2" > "$tmpfile"
 
 clingo src/progs.lp src/display.lp "$1" "$tmpfile"
 

@@ -7,7 +7,7 @@ from lark import Lark, Transformer
 constraint_store = set()
 path_store = set()
 
-class ShapeTransformer(Transformer):
+class ShapeTranspiler(Transformer):
 
     # Shapes
 
@@ -250,23 +250,44 @@ class ShapeTransformer(Transformer):
         return int(nr)
 
 
-def print_paths():
+def get_paths():
     paths = list(path_store)
     paths.sort()
-    for p in paths:
-        print('path({}).'.format(p))
+    return '\n'.join('path({}).'.format(p) for p in paths)
 
 
-def print_constraints():
+def get_constraints():
     constraints = list(constraint_store)
     constraints.sort()
-    for c in constraints:
-        print('constraint({}).'.format(c))
+    return '\n'.join('constraint({}).'.format(c) for c in constraints)
+
+
+def transpile(infile,grammarfile):
+    grammar = ''
+    with open(grammarfile, 'r') as file:
+        grammar = file.read()
+
+    shapes = ''
+    with open(infile, 'r') as file:
+        shapes = file.read() + '\n'
+
+    shape_parser = Lark(grammar, start='shapes')
+
+    tree = shape_parser.parse(shapes)
+    transformed = ShapeTranspiler().transform(tree)
+
+    return '\n'.join([get_paths(),get_constraints(),transformed])
 
 
 def main(argv):
     infile=''
-    usage = "Usage: shapeTranslator.py -i <inputfile>"
+    usage = "Usage: shapeTranspiler.py -i <inputfile>"
+
+    # Show help if called with no arguments.
+    if len(sys.argv)==1:
+        print(usage)
+        sys.exit(0)
+
     try:
         opts, args = getopt.getopt(argv,'hi:',['ifile='])
     except getopt.GetoptError:
@@ -279,22 +300,7 @@ def main(argv):
       elif opt in ('-i', '--ifile'):
          infile = arg
 
-    grammar = ''
-    with open('src/grammar.ebnf', 'r') as file:
-        grammar = file.read()
-
-    shapes = ''
-    with open(infile, 'r') as file:
-        shapes = file.read() + '\n'
-
-    shape_parser = Lark(grammar, start='shapes')
-
-    tree = shape_parser.parse(shapes)
-    transformed = ShapeTransformer().transform(tree)
-
-    print_constraints()
-    print_paths()
-    print(transformed)
+    print(transpile(infile,'src/grammar.ebnf'))
 
 if __name__ == '__main__':
    main(sys.argv[1:])

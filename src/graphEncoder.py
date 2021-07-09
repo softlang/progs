@@ -2,6 +2,7 @@
 
 import json
 import sys
+from io import StringIO
 import getopt
 
 # Note:
@@ -80,20 +81,10 @@ def handleEdge(data):
     putEdge(start, eid, end)
 
 
-def main(argv):
-    infile = 'graph.json'
-    usage = "Usage: translate.py -i <inputfile>"
-    try:
-        opts, args = getopt.getopt(argv,'hi:',['ifile='])
-    except getopt.GetoptError:
-        print(usage)
-        sys.exit(1)
-    for opt,arg in opts:
-      if opt == '-h':
-         print(usage)
-         sys.exit()
-      elif opt in ('-i', '--ifile'):
-         infile = arg
+def encode(infile):
+    sout = sys.stdout  
+    result = StringIO()
+    sys.stdout = result
 
     with open(infile) as f:
         for line in f:
@@ -105,6 +96,32 @@ def main(argv):
                     handleEdge(data)
             except:
                 sys.stderr.write("[WARNING] Ignoring malformed JSON: " + json.dumps(data) + "\n")
+
+    sys.stdout = sout
+    return result.getvalue()
+
+
+def main(argv):
+    infile = 'graph.json'
+    usage = "Usage: translate.py -i <inputfile>"
+
+    # Show help if called with no arguments.
+    if len(sys.argv)==1:
+        print(usage)
+        sys.exit(0)
+
+    try:
+        opts, args = getopt.getopt(argv,'hi:',['ifile='])
+    except getopt.GetoptError:
+        print(usage)
+        sys.exit(1)
+    for opt,arg in opts:
+      if opt == '-h':
+         print(usage)
+         sys.exit()
+      elif opt in ('-i', '--ifile'):
+         infile = arg
+    print(encode(infile))
 
 if __name__ == '__main__':
    main(sys.argv[1:])
