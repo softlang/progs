@@ -12,13 +12,6 @@ from src.shapeTranspiler import transpile
 from src.graphEncoder import encode
 
 
-# Temporary outdir.
-
-ts = calendar.timegm(time.gmtime())
-tempdir = "out"+str(ts)
-os.makedirs(tempdir)
-
-
 # Basic setup.
 
 ap = argparse.ArgumentParser(prog='ProGS',
@@ -151,6 +144,7 @@ def validate4J(db,no_assignment):
 
 def validate(shapes,graph,json,neo4j_db,debug,no_assignment):
     try:
+        os.makedirs(tempdir)
         convertShapes(shapes)
         if graph != None:
             validateLP(graph,no_assignment)
@@ -164,6 +158,7 @@ def validate(shapes,graph,json,neo4j_db,debug,no_assignment):
 
 def export(neo4j,json,debug):
     try:
+        os.makedirs(tempdir)
         export4j(neo4j,json)
     finally:
         cleanup(debug)
@@ -171,6 +166,7 @@ def export(neo4j,json,debug):
 
 def convert(json,asp,debug):
     try:
+        os.makedirs(tempdir)
         new_file = open(asp, "w")
         new_file.write(encode(json))
         new_file.close()
@@ -180,6 +176,7 @@ def convert(json,asp,debug):
 
 def parse(progs,out,debug):
     try:
+        os.makedirs(tempdir)
         s = convertShapes(progs)
         if out != None:
             shutil.move(tempfile("shapes.lp"), out)
@@ -195,6 +192,10 @@ def main():
 
     # Invoke the primary mode command.
     globals()[kwargs.pop('subparser')](**kwargs)
+
+# Temporary outdir.
+ts = calendar.timegm(time.gmtime())
+tempdir = "out"+str(ts)
 
 if __name__ == '__main__':
     # Show help if called with no arguments.

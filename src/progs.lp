@@ -9,9 +9,6 @@ properties(P) :- property(_, P, _).
 
 % -- Utility --
 
-% #input edgeshape/3. % why is this not working?
-% #input nodeshape/3. % why is this not working?
-
 min(yes,yes,yes).
 min(yes,no,no).
 min(no,yes,no).
