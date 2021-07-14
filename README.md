@@ -70,7 +70,7 @@ For more information about the ProGS shape validation language, see the followin
 TBD
 ```
 
-More details about the ASP encoding can also be found in an extended [report](http://www.google.de).
+More details about the ASP encoding can also be found in an extended [report](http://arxiv.org/abs/2107.05566).
 
 ### Validating Neo4j/Cypher Graphs
 
