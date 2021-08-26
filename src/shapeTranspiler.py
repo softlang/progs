@@ -28,8 +28,11 @@ class ShapeTranspiler(Transformer):
     def bot(self, b):
         return 'bottom'
 
-    def property(self, k):
+    def propertytarget(self, k):
         return "hasProperty({})".format(k[0])
+
+    def propvalue(sekf, kv):
+        return "hasPropertyValue({},{})".format(kv[0], kv[1])
 
     def shaperef(self, s):
         c = 'shapeRef({})'.format(s[0])
@@ -71,7 +74,13 @@ class ShapeTranspiler(Transformer):
         return c
 
     def nodeconstraint_or(self, items):
-        c = 'negate(and(negate({}),negate({})))'.format(items[0],items[1])
+        c1 = 'negate({})'.format(items[0])
+        c2 = 'negate({})'.format(items[1])
+        c3 = 'and({},{})'.format(c1,c2)
+        c = 'negate({})'.format(c3)
+        constraint_store.add(c1)
+        constraint_store.add(c2)
+        constraint_store.add(c3)
         constraint_store.add(c)
         return c
 
@@ -171,11 +180,20 @@ class ShapeTranspiler(Transformer):
         constraint_store.add(c)
         return c
 
+    def eqvalue(self, v):
+        return "eq({})".format(v[0])
+
     def string(self, s):
         return "isString"
 
+    def stringvalue(self, s):
+        return "string(\"{}\")".format(s[0])
+
     def int(self, s):
         return "isInteger"
+
+    def intvalue(self, i):
+        return "integer({})".format(i[0])
 
     def compare(self, ps):
         c = 'compare({},{})'.format(ps[0],ps[1])

@@ -5,7 +5,8 @@ edgeshape : "EDGE" shape "[" edgetarget "]" "{" edgeconstraint "}" ";"
 nodetarget : ":" label
               | NUMBER -> nid
               | "BOTTOM" -> bot
-              | property -> property
+              | property "=" value -> propvalue
+              | property -> propertytarget
 
 ?nodeconstraint : nodeconstraint_or
 ?nodeconstraint_or : [nodeconstraint_or "|"] nodeconstraint_and
@@ -33,11 +34,13 @@ path : ":" label
 
 predicate : "string" -> string
           | "int" -> int
+          | "=" value -> eqvalue
 
 edgetarget : ":" label
               | NUMBER -> eid
               | "BOTTOM" -> bot
-              | property -> property
+              | property "=" value -> propvalue
+              | property -> propertytarget
 
 ?edgeconstraint : edgeconstraint_or
 ?edgeconstraint_or : [edgeconstraint_or "|"] edgeconstraint_and
@@ -54,6 +57,9 @@ edgeconstraint_basic : "TOP" -> top
                       | ">>" nodeconstraint_basic -> right
                       | "(" edgeconstraint ")"
 
+?value : "\"" STRING "\"" -> stringvalue
+       | NUMBER -> intvalue
+
 comp : "<=" -> le
      | ">=" -> ge
      | ">" -> gr
@@ -68,6 +74,8 @@ labelref : WORD
 WORD : LCASE_LETTER CHAR+
 CHAR : LETTER | DIGIT | "_"
 NUMBER : DIGIT+
+SCHAR : CHAR | WS
+STRING : SCHAR+
 
 COMMENT : "%" /(.)*/ NEWLINE
 

@@ -1,0 +1,8 @@
+NODE s1 [BOTTOM] {
+    >= 1 :colleagueOf.:person
+};
+
+NODE s2 [name = "Gareth Keenan"] {
+    >= 2 role.string & 
+    s1
+};

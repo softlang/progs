@@ -15,7 +15,7 @@ from src.graphEncoder import encode
 # Basic setup.
 
 ap = argparse.ArgumentParser(prog='ProGS',
-                             description='Run validation on property graphs. For basic validation use \'validate\' mode.',
+                             description='Run validation on property graphs. For standard validation use \'validate\' mode.',
 			     epilog='Philipp Seifer @ https://github.com/softlang/progs')
 ap.version = '0.1'
 ap.add_argument('-v', action='version')

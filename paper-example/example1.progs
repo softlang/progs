@@ -1,0 +1,3 @@
+NODE employeeShape [:employee] {
+    :person
+};

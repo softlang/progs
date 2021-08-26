@@ -9,7 +9,6 @@ edge(102, 203, 101).
 % Define labels for nodes and edges.
 
 label(100, person).
-label(102, person).
 label(100, employee).
 label(102, employee).
 label(101, company).
@@ -27,6 +26,7 @@ property(100, name, string("Tim Canterbury")).
 property(100, age, integer(30)).
 property(101, name, string("Wernham Hogg")).
 property(102, name, string("Gareth Keenan")).
+property(102, role, string("sales")).
+property(102, role, string("team leader")).
 property(203, since, integer(2020)).
 property(200, since, integer(1970)).
-property(200, since, integer(2007)).

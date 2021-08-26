@@ -1,7 +1,0 @@
-NODE employeeShape [:employee] {
-    >= 1 worksForShape
-};
-
-EDGE worksForShape [BOTTOM] {
-    :worksFor
-};

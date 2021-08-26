@@ -1,0 +1,4 @@
+EDGE s3 [:worksFor] {
+    << :person &
+    >= 1 since . = 2020
+};

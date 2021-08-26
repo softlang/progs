@@ -1,4 +1,4 @@
-% -- Data Model --
+% -- data model --
 
 node(X) :- edge(X,_,_).
 node(X) :- edge(_,_,X).
@@ -7,7 +7,7 @@ edge(X) :- edge(_,X,_).
 labels(L) :- label(_, L).
 properties(P) :- property(_, P, _).
 
-% -- Utility --
+% -- utility --
 
 min(yes,yes,yes).
 min(yes,no,no).
@@ -19,17 +19,19 @@ min(maybe,maybe,maybe).
 min(no,maybe,no).
 min(maybe,no,no).
 
-% -- Core --
+% -- core --
 
 nodeshape(S) :- nodeshape(S,_,_).
 edgeshape(S) :- edgeshape(S,_,_).
 
 targetN(N,S) :- nodeshape(S,_,label(L)), label(N,L).
 targetN(N,S) :- nodeshape(S,_,hasProperty(K)), property(N,K,_).
+targetN(N,S) :- nodeshape(S,_,hasPropertyValue(K,V)), property(N,K,V).
 targetN(N,S) :- nodeshape(S,_,node(N)).
 
 targetE(E,S) :- edgeshape(S,_,label(L)), label(E,L).
 targetE(E,S) :- edgeshape(S,_,hasProperty(K)), property(E,K,_).
+targetE(E,S) :- edgeshape(S,_,hasPropertyValue(K,V), property(E,K,V)).
 targetE(E,S) :- edgeshape(S,_,edge(E)).
 
 :- targetN(N,S), not assignN(N,S,yes).
@@ -89,11 +91,15 @@ satisfiesN(N, negate(C), yes) :- node(N), constraint(negate(C)),
                                  satisfiesN(N,C,no).
 satisfiesN(N, negate(C), no) :- node(N), constraint(negate(C)),
                                 satisfiesN(N,C,yes).
+satisfiesN(N, negate(C), maybe) :- node(N), constraint(negate(C)),
+                                   satisfiesN(N, C, maybe).
 
 satisfiesE(E, negate(C), yes) :- edge(E), constraint(negate(C)),
                                  satisfiesE(E,C,no).
 satisfiesE(E, negate(C), no) :- edge(E), constraint(negate(C)),
                                 satisfiesE(E,C,yes).
+satisfiesE(E, negate(C), maybe) :- edge(E), constraint(negate(C)),
+                                   satisfiesE(E, C, maybe).
 
 % -- and --
 
@@ -127,7 +133,9 @@ countNC(N,P,NC,C) :- node(N), path(P), constraint(NC),
 countNoNC(N,P,NC,C) :- node(N), path(P), constraint(NC), 
                        #count { Y: path(N,Y,P), satisfiesN(Y,NC,no) } = C.
 
-% -- compare -- TODO
+% -- compare -- 
+
+% not yet supported
 
 % -- greaterEqE --
 
@@ -164,17 +172,17 @@ satisfiesE(E,countProp(K,isString,I),no) :- edge(E), constraint(countProp(K,isSt
 satisfiesE(E,countProp(K,isInteger,I),yes) :- edge(E), constraint(countProp(K,isInteger,I)), #count { V: property(E,K,integer(V)) } >= I.
 satisfiesE(E,countProp(K,isInteger,I),no) :- edge(E), constraint(countProp(K,isInteger,I)), #count { V: property(E,K,integer(V)) } < I.
 
-satisfiesN(N,countProp(K,equals(R),I),yes) :- node(N), constraint(countProp(K,equals(R),I)), #count { V: property(N,K,integer(V)), V == R } >= I.
-satisfiesN(N,countProp(K,equals(R),I),no) :- node(N), constraint(countProp(K,equals(R),I)), #count { V: property(N,K,integer(V)), V == R } < I.
-satisfiesN(N,countProp(K,equals(R),I),yes) :- node(N), constraint(countProp(K,equals(R),I)), #count { V: property(N,K,string(V)), V == R } >= I.
-satisfiesN(N,countProp(K,equals(R),I),no) :- node(N), constraint(countProp(K,equals(R),I)), #count { V: property(N,K,string(V)), V == R } < I.
+% -
 
-satisfiesE(E,countProp(K,equals(R),I),yes) :- edge(E), constraint(countProp(K,equals(R),I)), #count { V: property(E,K,integer(V)), V == R } >= I.
-satisfiesE(E,countProp(K,equals(R),I),no) :- edge(E), constraint(countProp(K,equals(R),I)), #count { V: property(E,K,integer(V)), V == R } < I.
-satisfiesE(E,countProp(K,equals(R),I),yes) :- edge(E), constraint(countProp(K,equals(R),I)), #count { V: property(E,K,string(V)), V == R } >= I.
-satisfiesE(E,countProp(K,equals(R),I),no) :- edge(E), constraint(countProp(K,equals(R),I)), #count { V: property(E,K,string(V)), V == R } < I.
+satisfiesN(N,countProp(K,eq(R),I),yes) :- node(N), constraint(countProp(K,eq(R),I)), #count { V: property(N,K,V), V == R } >= I.
+satisfiesN(N,countProp(K,eq(R),I),no) :- node(N), constraint(countProp(K,eq(R),I)), #count { V: property(N,K,V), V == R } < I.
 
-% -- compareValues -- TODO
+satisfiesE(E,countProp(K,eq(R),I),yes) :- edge(E), constraint(countProp(K,eq(R),I)), #count { V: property(E,K,V), V == R } >= I.
+satisfiesE(E,countProp(K,eq(R),I),no) :- edge(E), constraint(countProp(K,eq(R),I)), #count { V: property(E,K,V), V == R } < I.
+
+% -- compareValues --
+
+% not yet supported
 
 % -- equals --
 
