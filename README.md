@@ -28,7 +28,7 @@ copy & paste the contents of [progs.lp](src/progs.lp) (and [display.lp](src/disp
 After installing ```clingo``` you can validate the example graph as follows:
 
 ```sh
-./progs.py validate -g paper-example/graph.lp paper-example/shapes.progs
+./progs.py validate -g paper-example/graph.lp paper-example/example1_fixed.progs
 ```
 
 For documentation of the validate mode, use:
@@ -44,23 +44,16 @@ For more information about the useage of the ProGS CLI, use ```./progs.py --help
 The examples in folder [paper-example](paper-example) demonstrate the usage of this validator.
 It requires encoding a property graph using the predicates ```edge/3```, ```label/2``` and ```property/3```, which correspond to the components <img src="https://render.githubusercontent.com/render/math?math=\rho">, <img src="https://render.githubusercontent.com/render/math?math=\lambda"> and <img src="https://render.githubusercontent.com/render/math?math=\sigma"> of a property graph <img src="https://render.githubusercontent.com/render/math?math=G = (N,E,\rho,\lambda,\sigma)">.
 Node and edge shapes can be defined using a concrete syntax defined by the grammar in [grammar.ebnf](src/grammar.ebnf).
-For the examples of the concrete syntax of constraints and target queries, please see [paper-example/shapes.progs](paper-example/shapes.progs) or [movie-example/shapes.progs](movie-example/shapes.progs) or the example below.
+For examples of the concrete syntax of constraints and target queries, please see [paper-example](paper-example) (all examples from the ProGS paper, including alternative "fixed" variants for shapes that do not validate the graph) or [movie-example/shapes.progs](movie-example/shapes.progs) or the example below.
 
 ```
-NODE movieShape [:movie] { 
-    :movie &
-    =1 title.string 
+NODE s1 [BOTTOM] {
+    >= 1 :colleagueOf.:person
 };
 
-NODE actorShape [BOTTOM] {
-    :person &
-    >=1 :acted_in.movieShape &
-    >=1 name.string
-};
-
-EDGE actedInShape [:acted_in] {
-    << actorShape &
-    >> movieShape
+NODE s2 [name = "Gareth Keenan"] {
+    >= 2 role.string & 
+    s1
 };
 ```
 
