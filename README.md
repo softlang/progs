@@ -52,15 +52,32 @@ NODE s1 [BOTTOM] {
 };
 
 NODE s2 [name = "Gareth Keenan"] {
-    >= 2 role.string & 
+    >= 2 role.string &
     s1
 };
 ```
 
-For more information about the ProGS shape validation language, see the following [paper](http://www.google.de):
+For more information about the ProGS shape validation language, see the following [paper](https://link.springer.com/chapter/10.1007%2F978-3-030-88361-4_23):
 
 ```bibtex
-TBD
+@inproceedings{DBLP:conf/semweb/SeiferLS21,
+  author    = {Philipp Seifer and
+               Ralf L{\"{a}}mmel and
+               Steffen Staab},
+  title     = {ProGS: Property Graph Shapes Language},
+  booktitle = {The Semantic Web - {ISWC} 2021 - 20th International Semantic Web Conference,
+               {ISWC} 2021, Virtual Event, October 24-28, 2021, Proceedings},
+  series    = {Lecture Notes in Computer Science},
+  volume    = {12922},
+  pages     = {392--409},
+  publisher = {Springer},
+  year      = {2021},
+  url       = {https://doi.org/10.1007/978-3-030-88361-4\_23},
+  doi       = {10.1007/978-3-030-88361-4\_23},
+  timestamp = {Tue, 05 Oct 2021 10:03:09 +0200},
+  biburl    = {https://dblp.org/rec/conf/semweb/SeiferLS21.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
 ```
 
 More details about the ASP encoding can also be found in an extended [report](http://arxiv.org/abs/2107.05566).
