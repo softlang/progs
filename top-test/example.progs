@@ -1,0 +1,7 @@
+NODE nonCreatingUserShape [BOTTOM] {
+    = 0 :creates.TOP
+};
+
+EDGE approvesShape [:approves] {
+    << nonCreatingUserShape
+};

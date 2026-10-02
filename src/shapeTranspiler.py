@@ -85,6 +85,7 @@ class ShapeTranspiler(Transformer):
         return c
 
     def top(self, b):
+        constraint_store.add('top')
         return 'top'
 
     def rnid(self, n):
